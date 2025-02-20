@@ -24,10 +24,11 @@ Hệ thống sử dụng **Microservices** kết hợp với **Event-Driven Arch
 ## 🛠️ Hướng dẫn cài đặt
 ### 1️⃣ Clone repository
 ```sh
-git clone https://github.com/yourusername/ecommerce-backend.git
+git clone https://github.com/longblue2910/eCommerce
 cd ecommerce-backend
+```
 
-
+```sh
 📁 Cấu trúc thư mục
 
 /ecommerce-backend
@@ -49,3 +50,4 @@ cd ecommerce-backend
  ├── README.md                 # Mô tả dự án
  ├── docker-compose.yml        # Docker Compose để chạy services cục bộ
  ├── EcommerceBackend.sln      # Solution file của .NET
+ ```
