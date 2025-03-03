@@ -35,17 +35,9 @@ public class UserCommandHandler(IUserRepository userRepository, IRoleRepository 
 
     public async Task<bool> Handle(AssignRoleCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByIdAsync(request.UserId);
-        if (user == null) return false;
-
         var roles = await _roleRepository.GetByNamesAsync(request.RoleNames);
-        if (roles.Count != request.RoleNames.Count) return false; // Kiểm tra có role nào không tồn tại
+        if (roles.Count != request.RoleNames.Count) return false;
 
-        foreach (var role in roles)
-        {
-            user.AssignRole(role);
-        }
-
-        return true;
+        return await _userRepository.AssignRolesToUserAsync(request.UserId, roles);
     }
 }

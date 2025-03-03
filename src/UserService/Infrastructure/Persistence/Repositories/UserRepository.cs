@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(AppDbContext context) : IUserRepository
 {
-    private readonly AppDbContext _context;
-
-    public UserRepository(AppDbContext context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     public async Task<User?> GetByIdAsync(Guid id)
     {
@@ -44,5 +39,24 @@ public class UserRepository : IUserRepository
     {
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> AssignRolesToUserAsync(Guid userId, List<Role> roles)
+    {
+        // Mở transaction
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        var user = await _context.Users.Include(u => u.Roles)
+                                         .FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null) return false;
+
+        foreach (var role in roles)
+        {
+            user.AssignRole(role);
+        }
+
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+        return true;
     }
 }
