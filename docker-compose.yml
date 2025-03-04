@@ -1,17 +1,33 @@
-version: '3.8'
+﻿version: '3.8'
 
 services:
-  sqlserver:
+  # Cấu hình cho cơ sở dữ liệu SQL Server
+  userservice-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: user_service_db
-    restart: always
+    container_name: userservice_sqlserver
     environment:
-      SA_PASSWORD: "YourStrong!Passw0rd"
+      SA_PASSWORD: "SuperStrong!P@ssw0rd123"
       ACCEPT_EULA: "Y"
     ports:
-      - "1433:1433"
-    volumes:
-      - sqlserver_data:/var/opt/mssql
+      - "1435:1433"
+    networks:
+      - userservice_network
 
-volumes:
-  sqlserver_data:
+  # Cấu hình cho API của bạn
+  userservice-api:
+    build:
+      context: .  # Dùng thư mục gốc làm context
+      dockerfile: src/Services/UserService/API/Dockerfile  # Cập nhật lại đường dẫn
+    container_name: userservice_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    ports:
+      - "6000:80"   # Expose cổng của API
+    depends_on:
+      - userservice-db  # Đảm bảo DB đã sẵn sàng trước khi API khởi động
+    networks:
+      - userservice_network
+
+networks:
+  userservice_network:
+    driver: bridge
