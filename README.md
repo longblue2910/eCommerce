@@ -51,3 +51,7 @@ cd ecommerce-backend
  ├── docker-compose.yml        # Docker Compose để chạy services cục bộ
  ├── EcommerceBackend.sln      # Solution file của .NET
  ```
+
+
+ ## Docker Commands:
+- docker-compose -f docker-compose.yml up -d --remove-orphans --build

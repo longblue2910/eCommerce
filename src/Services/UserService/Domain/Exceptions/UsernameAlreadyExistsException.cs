@@ -1,5 +1,7 @@
-﻿namespace Domain.Exceptions;
+﻿using SharedKernel.Exceptions;
 
-public class UsernameAlreadyExistsException(string username) : Exception($"The username '{username}' is already taken.")
+namespace Domain.Exceptions;
+
+public class UsernameAlreadyExistsException(string username) : BadRequestException($"The username '{username}' is already taken.")
 {
 }

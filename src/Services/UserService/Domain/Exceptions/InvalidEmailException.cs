@@ -1,5 +1,7 @@
-﻿namespace Domain.Exceptions;
+﻿using SharedKernel.Exceptions;
 
-public class InvalidEmailException(string email) : Exception($"The email '{email}' is not valid.")
+namespace Domain.Exceptions;
+
+public class InvalidEmailException(string email) : BadRequestException($"The email '{email}' is not valid.")
 {
 }

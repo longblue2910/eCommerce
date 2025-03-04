@@ -14,11 +14,20 @@ public class UserRegisteredEventHandler(ILogger<UserRegisteredEventHandler> logg
     {
         _logger.LogInformation("🔥 User {Username} (ID: {UserId}) đã đăng ký thành công!", notification.Username, notification.UserId);
 
-        // Gửi email chào mừng
-        string subject = "🎉 Chào mừng bạn đến với Rimdasilva!";
-        string body = GetWelcomeEmailTemplate(notification.Username);
+        try
+        {
+            // Gửi email chào mừng
+            string subject = "🎉 Chào mừng bạn đến với Rimdasilva!";
+            string body = GetWelcomeEmailTemplate(notification.Username);
 
-        await _emailService.SendEmailAsync(notification.Email, subject, body);
+            await _emailService.SendEmailAsync(notification.Email, subject, body);
+            _logger.LogInformation("📧 Email chào mừng đã gửi đến {Email}", notification.Email);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "❌ Lỗi khi gửi email chào mừng cho {Email}", notification.Email);
+            // Không throw exception để tránh ảnh hưởng đến command chính
+        }
     }
 
     private string GetWelcomeEmailTemplate(string username)

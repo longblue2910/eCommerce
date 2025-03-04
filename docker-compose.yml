@@ -21,8 +21,9 @@ services:
     container_name: userservice_api
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:80"  # Thêm dòng này để ép ASP.NET chạy trên cổng 80
     ports:
-      - "6000:80"   # Expose cổng của API
+      - "9001:80"   # Expose cổng của API
     depends_on:
       - userservice-db  # Đảm bảo DB đã sẵn sàng trước khi API khởi động
     networks:

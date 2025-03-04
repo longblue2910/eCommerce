@@ -1,6 +1,8 @@
-﻿namespace Domain.Exceptions;
+﻿using SharedKernel.Exceptions;
 
-public class WeakPasswordException : Exception
+namespace Domain.Exceptions;
+
+public class WeakPasswordException : BadRequestException
 {
     public WeakPasswordException()
         : base("The provided password is too weak.") { }

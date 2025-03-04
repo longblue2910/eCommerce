@@ -30,6 +30,7 @@ public class UserCommandHandler(IUserRepository userRepository, IRoleRepository 
 
         var user = new User(Guid.NewGuid(), request.Username, request.Email, hashedPassword);
         await _userRepository.AddAsync(user);
+
         await _unitOfWork.CommitAsync();
         return user.Id;
     }

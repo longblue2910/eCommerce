@@ -1,41 +1,43 @@
-﻿# Giai đoạn base (runtime ASP.NET Core)
+﻿# 🔹 Stage 1: Base Image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
 
-# Giai đoạn build (SDK .NET)
+
+# 🔹 Stage 2: Build & Restore Dependencies
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy file .csproj trước để restore dependencies
+# Sao chép file dự án trước
 COPY ["src/Services/UserService/API/API.csproj", "Services/UserService/API/"]
 COPY ["src/Services/UserService/Application/Application.csproj", "Services/UserService/Application/"]
 COPY ["src/Services/UserService/Domain/Domain.csproj", "Services/UserService/Domain/"]
 COPY ["src/Services/UserService/Infrastructure/Infrastructure.csproj", "Services/UserService/Infrastructure/"]
 COPY ["src/Shared/SharedKernel/SharedKernel.csproj", "Shared/SharedKernel/"]
 
-# Restore dependencies
+# 🔹 Restore Dependencies
 RUN dotnet restore "Services/UserService/API/API.csproj"
 
-# Copy toàn bộ mã nguồn
-COPY . .
+# 🔹 Sao chép toàn bộ mã nguồn vào container
+COPY src/Services/UserService/API/ Services/UserService/API/
+COPY src/Services/UserService/Application/ Services/UserService/Application/
+COPY src/Services/UserService/Domain/ Services/UserService/Domain/
+COPY src/Services/UserService/Infrastructure/ Services/UserService/Infrastructure/
+COPY src/Shared/SharedKernel/ Shared/SharedKernel/
 
-# Debug: Kiểm tra xem thư mục Shared đã copy đúng chưa
-RUN ls -R /src/Shared || echo "Shared folder not found!"
-
-# Chuyển thư mục làm việc đến API
+# Chuyển đến thư mục chứa API
 WORKDIR "/src/Services/UserService/API"
 
-# Build project
-RUN dotnet build "./API.csproj" -c Release --no-restore -o /app/build
+# 🔹 Build dự án
+RUN dotnet build "API.csproj" -c Release -o /app/build
 
-# Giai đoạn publish
+# 🔹 Publish dự án
 FROM build AS publish
-RUN dotnet publish "./API.csproj" -c Release --no-restore -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
-# Giai đoạn cuối cùng (sản xuất)
+# 🔹 Stage 3: Run Application
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "UserService.API.dll"]
+
+ENTRYPOINT ["dotnet", "API.dll"]
