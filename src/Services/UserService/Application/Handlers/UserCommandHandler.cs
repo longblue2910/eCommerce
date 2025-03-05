@@ -1,4 +1,4 @@
-﻿using Application.Commands;
+﻿using Application.Commands.User;
 using Application.Services;
 using Domain.Entities;
 using Domain.Exceptions;
@@ -22,16 +22,24 @@ public class UserCommandHandler(IUserRepository userRepository, IRoleRepository 
     {
         var hashedPassword = _passwordHasher.HashPassword(request.Password);
 
-        if (await _userRepository.ExistsByUsernameAsync(request.Username)) 
+        if (await _userRepository.ExistsByUsernameAsync(request.Username))
             throw new UsernameAlreadyExistsException(request.Username);
 
         if (!PasswordIsStrong(request.Password))
             throw new WeakPasswordException();
 
-        var user = new User(Guid.NewGuid(), request.Username, request.Email, hashedPassword);
-        await _userRepository.AddAsync(user);
+        var user = User.RegisterUser(
+            id: Guid.NewGuid(),
+            username: request.Username,
+            email: request.Email,
+            passwordHash: hashedPassword,
+            fullName: request.FullName,
+            phoneNumber: request.PhoneNumber
+        );
 
+        await _userRepository.AddAsync(user);
         await _unitOfWork.CommitAsync();
+
         return user.Id;
     }
 

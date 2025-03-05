@@ -4,3 +4,11 @@ using MediatR;
 namespace Application.Queries;
 
 public record GetUserByIdQuery(Guid UserId) : IRequest<UserDto>;
+
+public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
+{
+    public Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+}

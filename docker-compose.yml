@@ -12,6 +12,7 @@ services:
       - "1435:1433"
     networks:
       - userservice_network
+    restart: always
 
   # Cấu hình cho API của bạn
   userservice-api:
@@ -28,6 +29,8 @@ services:
       - userservice-db  # Đảm bảo DB đã sẵn sàng trước khi API khởi động
     networks:
       - userservice_network
+    restart: always
+
 
 networks:
   userservice_network:

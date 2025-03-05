@@ -12,4 +12,5 @@ public interface IUserRepository
     void Delete(User user);
     Task<bool> AssignRolesToUserAsync(Guid userId, List<Role> roles);
     Task<bool> ExistsByUsernameAsync(string username);
+    Task<User?> GetByUsernameAsync(string username);
 }

@@ -1,7 +1,9 @@
-﻿using Domain.Interfaces;
+﻿using Application.Common.Interfaces;
+using Domain.Interfaces;
 using Domain.Interfaces.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +27,10 @@ public static class ServiceRegistration
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+        services.AddScoped<IJwtProvider, JwtProvider>();
+        services.AddScoped<ITokenService, TokenService>();
 
         return services;
     }
