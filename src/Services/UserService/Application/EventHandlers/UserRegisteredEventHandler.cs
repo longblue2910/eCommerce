@@ -38,7 +38,7 @@ public class UserRegisteredEventHandler(ILogger<UserRegisteredEventHandler> logg
                 <p>Chúng tôi rất vui khi bạn tham gia cùng chúng tôi.</p>
                 <p>Bạn có thể đăng nhập và bắt đầu khám phá ngay hôm nay!</p>
                 <a href='https://yourapp.com/login' style='display: inline-block; padding: 10px 20px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;'>Đăng nhập ngay</a>
-                <p style='margin-top: 20px; color: #888;'>[Your App Name] Team</p>
+                <p style='margin-top: 20px; color: #888;'>Rimdasilva Team</p>
             </div>";
     }
 }

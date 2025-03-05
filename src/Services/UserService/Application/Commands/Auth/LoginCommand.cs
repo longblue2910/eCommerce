@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Commands;
 
-public record LoginCommand(string Username, string Password, string IpAddress) : IRequest<LoginResponseDto>;
+public record LoginCommand(string Username, string Password) : IRequest<LoginResponseDto>;

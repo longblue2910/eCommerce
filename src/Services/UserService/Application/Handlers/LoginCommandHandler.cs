@@ -25,6 +25,8 @@ public class LoginUserCommandHandler(
 
     public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
+
+
         var user = await _userRepository.GetByUsernameAsync(request.Username);
 
         if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
@@ -41,7 +43,7 @@ public class LoginUserCommandHandler(
            user.Id,
            refreshTokenString,
            DateTime.UtcNow.AddDays(7),
-           request.IpAddress
+           ""
         );
         // Lưu Refresh Token vào database
         await _refreshTokenRepository.AddAsync(refreshToken);

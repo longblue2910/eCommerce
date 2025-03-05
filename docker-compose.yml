@@ -21,10 +21,10 @@ services:
       dockerfile: src/Services/UserService/API/Dockerfile  # Cập nhật lại đường dẫn
     container_name: userservice_api
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_ENVIRONMENT: "Stagging"
       ASPNETCORE_URLS: "http://+:80"  # Thêm dòng này để ép ASP.NET chạy trên cổng 80
     ports:
-      - "9001:80"   # Expose cổng của API
+      - "7000:80"   # Expose cổng của API
     depends_on:
       - userservice-db  # Đảm bảo DB đã sẵn sàng trước khi API khởi động
     networks:

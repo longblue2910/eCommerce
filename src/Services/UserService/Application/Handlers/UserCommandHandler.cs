@@ -20,10 +20,13 @@ public class UserCommandHandler(IUserRepository userRepository, IRoleRepository 
 
     public async Task<Guid> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        var hashedPassword = _passwordHasher.HashPassword(request.Password);
+        string hashedPassword = _passwordHasher.HashPassword(request.Password);
 
         if (await _userRepository.ExistsByUsernameAsync(request.Username))
             throw new UsernameAlreadyExistsException(request.Username);
+
+        if (await _userRepository.GetByEmailAsync(request.Email) != null)
+            throw new EmailAlreadyExistsException(request.Email);
 
         if (!PasswordIsStrong(request.Password))
             throw new WeakPasswordException();

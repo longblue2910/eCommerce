@@ -1,4 +1,5 @@
 ﻿using SharedKernel.Common;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities;
 
@@ -6,6 +7,9 @@ public class RefreshToken(Guid id, Guid userId, string token, DateTime expiryDat
     : Entity<Guid>(id)
 {
     public Guid UserId { get; private set; } = userId;
+    [ForeignKey("UserId")]
+    public User User { get; private set; }
+
     public string Token { get; private set; } = token;
     public DateTime ExpiryDate { get; private set; } = expiryDate;
     public bool IsExpired => DateTime.UtcNow >= ExpiryDate;

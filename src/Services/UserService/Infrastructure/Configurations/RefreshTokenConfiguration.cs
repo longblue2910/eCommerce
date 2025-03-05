@@ -36,10 +36,10 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
         // Đánh index cho UserId để tăng tốc truy vấn
         builder.HasIndex(rt => rt.UserId);
 
-        // Nếu có quan hệ với User
-        builder.HasOne<User>()
-            .WithMany()
+        builder.HasOne(rt => rt.User)
+            .WithMany(u => u.RefreshTokens) // Xác nhận lại User có nhiều RefreshTokens
             .HasForeignKey(rt => rt.UserId)
-            .OnDelete(DeleteBehavior.Cascade); // Xóa User thì xóa RefreshToken
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }

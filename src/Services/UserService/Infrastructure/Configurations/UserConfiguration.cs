@@ -31,11 +31,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatedAt).IsRequired();
         builder.Property(u => u.LastLoginAt).IsRequired(false);
 
-        // ⚡ Quan hệ One-to-Many với RefreshToken
-        builder.HasMany<RefreshToken>()
-            .WithOne()
+
+        builder.HasMany(u => u.RefreshTokens) // 1 User có nhiều RefreshTokens
+            .WithOne(rt => rt.User)           // 1 RefreshToken thuộc về 1 User
             .HasForeignKey(rt => rt.UserId)
-            .OnDelete(DeleteBehavior.Cascade); // Xóa User sẽ xóa luôn RefreshToken
+            .OnDelete(DeleteBehavior.Cascade);
+
 
         // ⚡ Quan hệ Many-to-Many với bảng Role (User - Role)
         builder.HasMany(u => u.Roles)

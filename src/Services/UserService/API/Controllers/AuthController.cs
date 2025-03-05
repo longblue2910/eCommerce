@@ -13,9 +13,6 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
-        var commandWithIp = command with { IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() };
-        var result = await _mediator.Send(commandWithIp);
-
         var response = await _mediator.Send(command);
         return Ok(response);
     }
