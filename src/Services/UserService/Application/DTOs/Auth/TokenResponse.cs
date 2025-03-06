@@ -1,6 +1,6 @@
 ﻿namespace Application.DTOs.Auth;
 
-public class LoginResponseDto(string accessToken, string refreshToken, DateTime expiration)
+public class TokenResponse(string accessToken, string refreshToken, DateTime expiration)
 {
     public string AccessToken { get; set; } = accessToken;
     public string RefreshToken { get; set; } = refreshToken;

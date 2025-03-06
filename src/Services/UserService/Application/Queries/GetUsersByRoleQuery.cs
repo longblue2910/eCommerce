@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Application.Queries;
 
-public record GetUsersByRoleQuery(string RoleName) : IRequest<List<UserDto>>;
+public record GetUsersByRoleQuery(string RoleName) : IRequest<List<UserResponse>>;

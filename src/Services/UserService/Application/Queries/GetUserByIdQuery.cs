@@ -1,14 +1,24 @@
 ﻿using Application.DTOs;
+using AutoMapper;
+using Domain.Interfaces.Repositories;
 using MediatR;
+using SharedKernel.Exceptions;
 
 namespace Application.Queries;
 
-public record GetUserByIdQuery(Guid UserId) : IRequest<UserDto>;
+public record GetUserByIdQuery(Guid UserId) : IRequest<UserResponse>;
 
-public class GetUserByIdQueryHandler: IRequestHandler<GetUserByIdQuery, UserDto>
+public class GetUserByIdQueryHandler(IUserRepository userRepository, IMapper mapper)
+    : IRequestHandler<GetUserByIdQuery, UserResponse>
 {
-    public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    private readonly IUserRepository _userRepository = userRepository;
+    private readonly IMapper _mapper = mapper;
+
+    public async Task<UserResponse> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var user = await _userRepository.GetByIdAsync(request.UserId)
+            ?? throw new NotFoundException($"User id {request.UserId} not found.");
+
+        return _mapper.Map<UserResponse>(user);
     }
 }

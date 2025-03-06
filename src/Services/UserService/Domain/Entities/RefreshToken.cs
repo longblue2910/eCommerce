@@ -24,10 +24,9 @@ public class RefreshToken(Guid id, Guid userId, string token, DateTime expiryDat
     public bool IsRevoked => RevokedAt.HasValue;
     public bool IsActive => !IsExpired && !IsRevoked;
 
-    public void Revoke(string revokedByIp)
+    public void Revoke()
     {
-        RevokedAt = DateTime.UtcNow;
-        RevokedByIp = revokedByIp;
+        RevokedAt = DateTime.Now;
     }
 
     public void Replace(string newToken)

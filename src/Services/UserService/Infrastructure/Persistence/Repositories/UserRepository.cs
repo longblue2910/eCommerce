@@ -15,7 +15,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
     public async Task<User?> GetByUsernameAsync(string username)
     {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        return await _context.Users.Where(u => u.Username == username).Include(x => x.Roles).FirstOrDefaultAsync();
     }
 
     public async Task<User?> GetByEmailAsync(string email)

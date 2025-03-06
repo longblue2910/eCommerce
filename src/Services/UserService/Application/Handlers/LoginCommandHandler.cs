@@ -1,4 +1,5 @@
 ﻿using Application.Commands;
+using Application.Commands.Auth;
 using Application.Common.Interfaces;
 using Application.DTOs.Auth;
 using Application.Exceptions;
@@ -14,7 +15,8 @@ public class LoginUserCommandHandler(
     IJwtProvider jwtProvider,
     ITokenService tokenService,
     IUnitOfWork unitOfWork,
-    IRefreshTokenRepository refreshTokenRepository) : IRequestHandler<LoginCommand, LoginResponseDto>
+    IRefreshTokenRepository refreshTokenRepository) : IRequestHandler<LoginCommand, TokenResponse>,
+                                                      IRequestHandler<RefreshTokenCommand, TokenResponse>
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IPasswordHasher _passwordHasher = passwordHasher;
@@ -23,26 +25,24 @@ public class LoginUserCommandHandler(
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IRefreshTokenRepository _refreshTokenRepository = refreshTokenRepository;
 
-    public async Task<LoginResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<TokenResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-
-
         var user = await _userRepository.GetByUsernameAsync(request.Username);
 
         if (user is null || !_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
             throw new InvalidCredentialsException();
 
-        // 🔥 Tạo Access Token
+        // Tạo Access Token
         var (accessToken, expiration) = _jwtProvider.GenerateToken(user.Id, user.Username, user.Email, user.Roles.Select(r => r.Name).ToList());
 
-        // 🔥 Tạo Refresh Token
+        // Tạo Refresh Token
         var refreshTokenString = _tokenService.GenerateRefreshToken();
 
         var refreshToken = new RefreshToken(
            Guid.NewGuid(),
            user.Id,
            refreshTokenString,
-           DateTime.UtcNow.AddDays(7),
+           DateTime.Now.AddDays(14),
            ""
         );
         // Lưu Refresh Token vào database
@@ -50,6 +50,29 @@ public class LoginUserCommandHandler(
 
         await _unitOfWork.CommitAsync();
 
-        return new LoginResponseDto(accessToken, refreshTokenString, expiration);
+        return new TokenResponse(accessToken, refreshTokenString, expiration);
+    }
+
+    public async Task<TokenResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
+    {
+        var rToken = await _refreshTokenRepository.GetByTokenAsync(request.RefreshToken);
+        if (rToken == null || rToken.ExpiryDate < DateTime.Now)
+        {
+            throw new UnauthorizedAccessException("Invalid or expired refresh token");
+        }
+
+        var user = await _userRepository.GetByIdAsync(rToken.UserId);
+
+        var (accessToken, expiration) = _jwtProvider.GenerateToken(user.Id, user.Username, user.Email, user.Roles.Select(r => r.Name).ToList());
+        var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+        // Cập nhật Refresh Token mới
+        rToken.Replace(newRefreshToken);
+
+        rToken.Revoke();
+        await _unitOfWork.CommitAsync();
+
+        return new TokenResponse(accessToken, newRefreshToken, expiration);
+
     }
 }

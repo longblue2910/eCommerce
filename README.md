@@ -32,24 +32,25 @@ cd ecommerce-backend
 📁 Cấu trúc thư mục
 
 /ecommerce-backend
- ├── src/                     # Chứa source code của từng service
- │    ├── UserService/        # Service quản lý User (SQL Server)
- │    ├── OrderService/       # Service quản lý Order (PostgreSQL)
- │    ├── ProductService/     # Service quản lý Product (MongoDB)
- │    ├── BasketService/      # Service giỏ hàng (Redis)
- │    ├── ShippingService/    # Service vận chuyển
- │    ├── InventoryService/   # Service quản lý kho hàng (gRPC)
- │    ├── ApiGateway/         # API Gateway (Reverse Proxy)
+ ├── src/                     # Chứa source code chính
+ │    ├── Services/           # Chứa từng service trong hệ thống
+ │    │    ├── UserService/        # Service quản lý User (SQL Server)
+ │    │    ├── OrderService/       # Service quản lý Order (PostgreSQL)
+ │    │    ├── ProductService/     # Service quản lý Product (MongoDB)
+ │    │    ├── BasketService/      # Service giỏ hàng (Redis)
+ │    │    ├── ShippingService/    # Service vận chuyển
+ │    │    ├── InventoryService/   # Service quản lý kho hàng (gRPC)
+ │    │    ├── ApiGateway/         # API Gateway (Reverse Proxy)
+ │    ├── Shared/             # Chứa code dùng chung (DTOs, Utilities, Authentication)
  ├── proto/                   # Chứa file .proto định nghĩa gRPC
  │    ├── inventory.proto     # Định nghĩa gRPC cho Inventory Service
- ├── shared/                  # Chứa code dùng chung (DTOs, Utilities, Authentication)
  ├── infra/                   # Chứa config CI/CD, Docker, Terraform
  ├── tests/                   # Chứa Unit Test và Integration Test
  ├── docs/                    # Tài liệu thiết kế hệ thống
- ├── .gitignore                # Bỏ qua thư mục /bin, /obj, /.vs
- ├── README.md                 # Mô tả dự án
- ├── docker-compose.yml        # Docker Compose để chạy services cục bộ
- ├── EcommerceBackend.sln      # Solution file của .NET
+ ├── .gitignore               # Bỏ qua thư mục /bin, /obj, /.vs
+ ├── README.md                # Mô tả dự án
+ ├── docker-compose.yml       # Docker Compose để chạy services cục bộ
+ ├── eCommerce.API.sln     # Solution file của .NET
  ```
 
 

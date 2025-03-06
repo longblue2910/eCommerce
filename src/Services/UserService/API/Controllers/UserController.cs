@@ -11,6 +11,11 @@ public class UserController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
+    /// <summary>
+    /// Đăng ký user
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns></returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterUserCommand command)
     {
@@ -18,7 +23,13 @@ public class UserController(IMediator mediator) : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = userId }, new { Id = userId });
     }
 
+    /// <summary>
+    /// Get by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id:guid}")]
+    [Authorization("Admin")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var user = await _mediator.Send(new GetUserByIdQuery(id));
