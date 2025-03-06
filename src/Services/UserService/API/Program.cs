@@ -28,7 +28,6 @@ var jwtSettings = builder.Configuration.GetSection(nameof(JwtSettings))
 
 builder.Services.AddSingleton(jwtSettings);
 
-
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -37,14 +36,13 @@ builder.Services.AddAuthentication(options => {
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters()
     {
-        ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
-        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtSettings.IssuerSigningKey)),
-        ValidateIssuer = jwtSettings.ValidateIssuer,
-        ValidIssuer = jwtSettings.ValidIssuer,
-        ValidateAudience = jwtSettings.ValidateAudience,
-        ValidAudience = jwtSettings.ValidAudience,
-        RequireExpirationTime = jwtSettings.RequireExpirationTime,
-        ValidateLifetime = jwtSettings.RequireExpirationTime,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings.Issuer,
+        ValidateAudience = true,
+        ValidAudience = jwtSettings.Audience,
+        ValidateLifetime = true,
         ClockSkew = TimeSpan.FromSeconds(10),
     };
 });

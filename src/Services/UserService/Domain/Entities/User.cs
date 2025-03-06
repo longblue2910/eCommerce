@@ -106,11 +106,6 @@ public class User : AggregateRoot<Guid>
         RefreshTokens.Add(refreshToken);
     }
 
-    public void RevokeRefreshToken(string token, string revokedByIp)
-    {
-        var refreshToken = RefreshTokens.FirstOrDefault(rt => rt.Token == token);
-        refreshToken?.Revoke(revokedByIp);
-    }
 
     private bool EmailIsValid(string email) => email.Contains("@") && email.Contains(".");
 }

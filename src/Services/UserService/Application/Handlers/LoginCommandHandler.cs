@@ -67,9 +67,11 @@ public class LoginUserCommandHandler(
         var newRefreshToken = _tokenService.GenerateRefreshToken();
 
         // Cập nhật Refresh Token mới
-        rToken.Replace(newRefreshToken);
+        rToken.Replace(request.RefreshToken);
+        rToken.Renew(newRefreshToken);
 
-        rToken.Revoke();
+        rToken.RevokeAt();
+
         await _unitOfWork.CommitAsync();
 
         return new TokenResponse(accessToken, newRefreshToken, expiration);

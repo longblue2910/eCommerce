@@ -11,8 +11,7 @@ public class JwtProvider(JwtSettings jwtSettings) : IJwtProvider
 
     public (string Token, DateTime Expiration) GenerateToken(Guid userId, string username, string email, List<string> roles)
     {
-        var expireTime = DateTime.Now.AddHours(3);
-
+        var expireTime = DateTime.Now.AddMinutes(_jwtSettings.AccessTokenExpiryMinutes);
         List<Claim> claims =
         [
             new(JwtRegisteredClaimNames.Sub, userId.ToString()),
@@ -20,23 +19,20 @@ public class JwtProvider(JwtSettings jwtSettings) : IJwtProvider
             new(JwtRegisteredClaimNames.Email, email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.Expiration, expireTime.ToString("MMM ddd dd yyyy HH:mm:ss tt")),
-
             // 🔹 Thêm cả `ClaimTypes.Role` và `"role"` để đảm bảo hoạt động
             .. roles.Select(role => new Claim(ClaimTypes.Role, role)),
             .. roles.Select(role => new Claim("role", role)),
         ];
 
-        var key = Encoding.ASCII.GetBytes(_jwtSettings.IssuerSigningKey);
-        var token = new JwtSecurityToken(issuer: _jwtSettings.ValidIssuer,
-                                         audience: _jwtSettings.ValidAudience,
+        var key = Encoding.ASCII.GetBytes(_jwtSettings.SecretKey);
+        var token = new JwtSecurityToken(issuer: _jwtSettings.Issuer,
+                                         audience: _jwtSettings.Audience,
                                          claims: claims,
-                                         notBefore: new DateTimeOffset(DateTime.Now).DateTime,
                                          expires: new DateTimeOffset(expireTime).DateTime,
                                          signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key),
                                          SecurityAlgorithms.HmacSha256)
         );
 
         return (new JwtSecurityTokenHandler().WriteToken(token), expireTime);
-
     }
 }
