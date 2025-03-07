@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Role;
+using Application.Queries.Role;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/roles")]
-[Authorization("Admin")]
+//[Authorization("Admin")]
 public class RolesController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
@@ -37,5 +38,14 @@ public class RolesController(IMediator mediator) : ControllerBase
     {
         await _mediator.Send(new RemovePermissionFromRoleCommand(roleId, permissionId));
         return NoContent();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetRoles([FromQuery] string keyword, [FromQuery] bool? isActive,
+                                              [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetRolesQuery(keyword, isActive, pageNumber, pageSize);
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 }

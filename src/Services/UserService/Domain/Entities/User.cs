@@ -117,4 +117,14 @@ public class User : AggregateRoot<Guid>
     public bool HasPermission(string permissionName) =>
         Roles.Any(role => role.HasPermission(permissionName));
 
+    public void ToggleStatus()
+    {
+        IsActive = !IsActive;
+        if (!IsActive)
+        {
+            AddDomainEvent(new UserDeactivatedEvent(Id));
+        }
+    }
+
+
 }

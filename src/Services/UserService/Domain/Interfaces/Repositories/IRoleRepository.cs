@@ -13,4 +13,6 @@ public interface IRoleRepository
 
     Task<Role> GetByNameAsync(string roleName);
     Task<List<Role>> GetByNamesAsync(List<string> roleNames); // Thêm phương thức này
+    Task<(List<Role>, int TotalRecords)> GetRolesAsync(string keyword, int pageNumber, int pageSize, CancellationToken cancellationToken);
+
 }
