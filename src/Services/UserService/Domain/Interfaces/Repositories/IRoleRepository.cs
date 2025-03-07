@@ -5,6 +5,8 @@ namespace Domain.Interfaces.Repositories;
 public interface IRoleRepository
 {
     Task<Role> GetByIdAsync(Guid id);
+    Task<List<Role>> GetByIdsAsync(List<Guid> ids);
+
     Task<List<Role>> GetAllAsync();
     Task AddAsync(Role role);
     void Delete(Role role);

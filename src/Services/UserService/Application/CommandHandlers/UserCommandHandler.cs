@@ -62,11 +62,13 @@ public class UserCommandHandler(IUserRepository userRepository, IRoleRepository 
 
     public async Task<bool> Handle(AssignRoleCommand request, CancellationToken cancellationToken)
     {
-        var roles = await _roleRepository.GetByNamesAsync(request.RoleNames);
-        if (roles.Count != request.RoleNames.Count) return false;
+        var user = await _userRepository.GetByIdAsync(request.UserId) ?? throw new Exception("User not found");
 
-        var result = await _userRepository.AssignRolesToUserAsync(request.UserId, roles);
+        var roles = await _roleRepository.GetByIdsAsync(request.RoleIds);
+        if (roles.Count != request.RoleIds.Count) throw new Exception("Some roles not found");
+
+        user.SetRoles(roles); // Xóa hết roles cũ và gán roles mới
         await _unitOfWork.CommitAsync();
-        return result;
+        return true;
     }
 }

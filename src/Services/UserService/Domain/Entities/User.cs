@@ -11,7 +11,6 @@ public class User : AggregateRoot<Guid>
     public string PasswordHash { get; private set; }
     public bool IsActive { get; private set; }
     public List<Role> Roles { get; private set; } = [];
-
     public string FullName { get; private set; }
     public string PhoneNumber { get; private set; }
     public string Address { get; private set; }
@@ -97,6 +96,12 @@ public class User : AggregateRoot<Guid>
         }
     }
 
+    public void SetRoles(List<Role> roles)
+    {
+        Roles.Clear(); // Xóa hết roles cũ
+        Roles.AddRange(roles); // Gán roles mới
+    }
+
     public bool HasRole(string roleName) => Roles.Any(r => r.Name == roleName);
 
     // 🔥 Thêm phương thức quản lý Refresh Token
@@ -108,4 +113,8 @@ public class User : AggregateRoot<Guid>
 
 
     private bool EmailIsValid(string email) => email.Contains("@") && email.Contains(".");
+
+    public bool HasPermission(string permissionName) =>
+        Roles.Any(role => role.HasPermission(permissionName));
+
 }

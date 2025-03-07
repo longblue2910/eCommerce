@@ -40,4 +40,9 @@ public class RoleRepository(AppDbContext context) : IRoleRepository
     {
         _context.Roles.Remove(role);
     }
+
+    public async Task<List<Role>> GetByIdsAsync(List<Guid> ids)
+    {
+        return await _context.Roles.Where(r => ids.Contains(r.Id)).ToListAsync();
+    }
 }

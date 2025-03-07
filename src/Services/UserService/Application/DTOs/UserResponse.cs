@@ -1,14 +1,16 @@
-﻿using Domain.Entities;
-
-namespace Application.DTOs;
+﻿namespace Application.Users.Dtos;
 
 public class UserResponse
 {
-    public string Username { get; private set; }
-    public string Email { get; private set; }
-    public List<Role> Roles { get; private set; } = [];
-    public string FullName { get; private set; }
-    public string PhoneNumber { get; private set; }
-    public string Address { get; private set; }
-    public string ProfilePictureUrl { get; private set; }
-} 
+    public Guid Id { get; init; }
+    public string Username { get; init; }
+    public string Email { get; init; }
+    public string FullName { get; init; }
+    public string PhoneNumber { get; init; }
+    public string Address { get; init; }
+    public string ProfilePictureUrl { get; init; }
+    public bool IsActive { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime? LastLoginAt { get; init; }
+    public List<string> Roles { get; init; }
+}

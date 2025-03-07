@@ -1,6 +1,6 @@
 ﻿using Application.DTOs;
 using MediatR;
 
-namespace Application.Queries;
+namespace Application.Queries.User;
 
 public record GetUsersByRoleQuery(string RoleName) : IRequest<List<UserResponse>>;

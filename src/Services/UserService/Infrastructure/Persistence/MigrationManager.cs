@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace Infrastructure.Persistence;
 
@@ -27,12 +28,9 @@ public static class MigrationManager
             logger.LogInformation("✅ Database Migrations Applied Successfully.");
 
             // 🛠 Seed Data (nếu cần)
-            if (!dbContext.Users.Any())
-            {
-                logger.LogInformation("🌱 Seeding initial data...");
-                SeedDatabase(dbContext, logger);
-                logger.LogInformation("✅ Database Seeding Completed.");
-            }
+            logger.LogInformation("🌱 Seeding initial data...");
+            SeedDatabase(dbContext, logger);
+            logger.LogInformation("✅ Database Seeding Completed.");
         }
         catch (Exception ex)
         {
@@ -73,6 +71,65 @@ public static class MigrationManager
             );
 
             dbContext.Users.AddRange(adminUser, user1, user2);
+            dbContext.SaveChanges();
+        }
+
+        List<Permission> permissions =
+        [
+            new(Guid.NewGuid(), "User.Create", "Tạo người dùng"),
+            new(Guid.NewGuid(), "User.Read", "Xem danh sách người dùng"),
+            new(Guid.NewGuid(), "User.Update", "Cập nhật thông tin người dùng"),
+            new(Guid.NewGuid(), "User.Delete", "Xóa người dùng"),
+        
+            new(Guid.NewGuid(), "Role.Create", "Tạo vai trò mới"),
+            new(Guid.NewGuid(), "Role.Read", "Xem danh sách vai trò"),
+            new(Guid.NewGuid(), "Role.Update", "Chỉnh sửa vai trò"),
+            new(Guid.NewGuid(), "Role.Delete", "Xóa vai trò"),
+        
+            new(Guid.NewGuid(), "Permission.Assign", "Gán quyền cho vai trò"),
+        ];
+
+        if (!dbContext.Permissions.Any())
+        {
+            dbContext.Permissions.AddRange(permissions);
+            dbContext.SaveChanges();
+        }
+
+
+        if (!dbContext.Permissions.Any())
+        {
+            dbContext.Permissions.AddRange(permissions);
+            dbContext.SaveChanges();
+        }
+
+        if (!dbContext.Roles.Any())
+        {
+
+            var adminRole = new Role(Guid.NewGuid(), "Admin");
+            var managerRole = new Role(Guid.NewGuid(), "Manager");
+            var userRole = new Role(Guid.NewGuid(), "User");
+
+            // Gán quyền cho Admin (Toàn quyền)
+            adminRole.AddPermission(permissions.First(p => p.Name == "User.Create"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "User.Read"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "User.Update"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "User.Delete"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "Role.Create"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "Role.Read"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "Role.Update"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "Role.Delete"));
+            adminRole.AddPermission(permissions.First(p => p.Name == "Permission.Assign"));
+
+            // Gán quyền cho Manager (Quản lý người dùng)
+            managerRole.AddPermission(permissions.First(p => p.Name == "User.Read"));
+            managerRole.AddPermission(permissions.First(p => p.Name == "User.Update"));
+
+            // Gán quyền cho User (Chỉ đọc)
+            userRole.AddPermission(permissions.First(p => p.Name == "User.Read"));
+
+            var roles = new List<Role> { adminRole, managerRole, userRole };
+
+            dbContext.Roles.AddRange(roles);
             dbContext.SaveChanges();
         }
 

@@ -5,20 +5,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SharedKernel.Common;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : DbContext(options)
 {
-    private readonly IMediator _mediator;
-
-    public AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator)
-        : base(options)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,6 +1,8 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Domain.Specifications;
 using Microsoft.EntityFrameworkCore;
+using SharedKernel.Common;
 
 namespace Infrastructure.Persistence.Repositories;
 
@@ -45,8 +47,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
 
     public async Task<bool> AssignRolesToUserAsync(Guid userId, List<Role> roles)
     {
-        var user = await _context.Users.Include(u => u.Roles)
-                                         .FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await _context.Users.Include(u => u.Roles).FirstOrDefaultAsync(u => u.Id == userId);
         if (user == null) return false;
 
         foreach (var role in roles)
@@ -61,4 +62,23 @@ public class UserRepository(AppDbContext context) : IUserRepository
     {
         return await _context.Users.AnyAsync(x => x.Username == username);
     }
+
+    public async Task<PagedResult<User>> GetUsersAsync(Specification<User> specification, int page, int pageSize)
+    {
+        var query = _context.Users.Where(specification.Criteria);
+
+        int totalCount = await query.CountAsync(); // 🔥 Tổng số bản ghi
+        var users = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<User>(users, totalCount, page, pageSize);
+    }
+
+    public async Task<int> CountUsersAsync(UserSpecification spec)
+    {
+        return await _context.Users.Where(spec.Criteria).CountAsync();
+    }
+
 }

@@ -23,8 +23,7 @@ public static class ServiceRegistration
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 

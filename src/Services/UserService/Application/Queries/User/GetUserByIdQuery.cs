@@ -1,10 +1,10 @@
-﻿using Application.DTOs;
+﻿using Application.Users.Dtos;
 using AutoMapper;
 using Domain.Interfaces.Repositories;
 using MediatR;
 using SharedKernel.Exceptions;
 
-namespace Application.Queries;
+namespace Application.Queries.User;
 
 public record GetUserByIdQuery(Guid UserId) : IRequest<UserResponse>;
 
