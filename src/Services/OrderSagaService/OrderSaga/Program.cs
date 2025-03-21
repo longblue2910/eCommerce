@@ -10,7 +10,7 @@ var host = Host.CreateDefaultBuilder(args)
     {
         services.AddSingleton<IMessageBus, RabbitMqMessageBus>();
         services.AddSingleton<OrderSagaOrchestrator>();
-        services.AddHostedService<OrderSagaWorker>();
+        //services.AddHostedService<OrderSagaWorker>();
     })
     .Build();
 
