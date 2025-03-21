@@ -14,7 +14,7 @@ public class UserDeactivatedEvent(Guid userId) : IDomainEvent
 
 /*
  * 
- * 📌 Khi nào event này xảy ra?
+ * 📌 Khi nào event này xảy ra? 
    Khi admin hoặc user vô hiệu hóa tài khoản, sự kiện sẽ được phát đi.
    Các service khác có thể chặn truy cập user này.
 

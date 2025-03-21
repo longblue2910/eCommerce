@@ -11,10 +11,10 @@ services:
     ports:
       - "1435:1433"
     networks:
-      - userservice_network
+      - app_network
     restart: always
 
-  # Cấu hình cho API của bạn
+  # Cấu hình cho API UserService
   userservice-api:
     build:
       context: .  # Dùng thư mục gốc làm context
@@ -22,16 +22,47 @@ services:
     container_name: userservice_api
     environment:
       ASPNETCORE_ENVIRONMENT: "Stagging"
-      ASPNETCORE_URLS: "http://+:80"  # Thêm dòng này để ép ASP.NET chạy trên cổng 80
+      ASPNETCORE_URLS: "http://+:80"
     ports:
-      - "7000:80"   # Expose cổng của API
+      - "7000:80"
     depends_on:
-      - userservice-db  # Đảm bảo DB đã sẵn sàng trước khi API khởi động
+      - userservice-db
     networks:
-      - userservice_network
+      - app_network
     restart: always
 
+  # Cấu hình cho MongoDB
+  productservice-db:
+    image: mongo:latest
+    container_name: productservice_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
+    ports:
+      - "27018:27017"
+    networks:
+      - app_network
+    restart: always
+
+  # Cấu hình cho API ProductService
+  productservice-api:
+    build:
+      context: .
+      dockerfile: src/Services/ProductService/API/Dockerfile
+    container_name: productservice_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Stagging"
+      ASPNETCORE_URLS: "http://+:80"
+      MONGO_CONNECTION_STRING: "mongodb://admin:password@productservice-db:27017/"
+      MONGO_DATABASE: "ProductDb"
+    ports:
+      - "7001:80"
+    depends_on:
+      - productservice-db
+    networks:
+      - app_network
+    restart: always
 
 networks:
-  userservice_network:
+  app_network:
     driver: bridge

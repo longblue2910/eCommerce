@@ -1,4 +1,5 @@
-﻿using Domain.Repositories;
+﻿using Domain.Interfaces.Repositories;
+using Domain.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryRepository, MongoCategoryRepository>();
         services.AddScoped<IReviewRepository, MongoReviewRepository>();
         services.AddScoped<ISupplierRepository, MongoSupplierRepository>();
+        services.AddScoped<IProductRepository, MongoProductRepository>();
 
         return services;
     }

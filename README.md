@@ -17,7 +17,6 @@ Hệ thống sử dụng **Microservices** kết hợp với **Event-Driven Arch
 - **OrderService**: Quản lý đơn hàng (**PostgreSQL**)
 - **ProductService**: Quản lý sản phẩm (**MongoDB**)
 - **BasketService**: Quản lý giỏ hàng (**Redis**)
-- **ShippingService**: Xử lý vận chuyển đơn hàng
 - **InventoryService**: Quản lý kho hàng (**gRPC**)
 - **API Gateway**: Reverse proxy điều hướng request
 
@@ -38,7 +37,6 @@ cd ecommerce-backend
  │    │    ├── OrderService/       # Service quản lý Order (PostgreSQL)
  │    │    ├── ProductService/     # Service quản lý Product (MongoDB)
  │    │    ├── BasketService/      # Service giỏ hàng (Redis)
- │    │    ├── ShippingService/    # Service vận chuyển
  │    │    ├── InventoryService/   # Service quản lý kho hàng (gRPC)
  │    │    ├── ApiGateway/         # API Gateway (Reverse Proxy)
  │    ├── Shared/             # Chứa code dùng chung (DTOs, Utilities, Authentication)
