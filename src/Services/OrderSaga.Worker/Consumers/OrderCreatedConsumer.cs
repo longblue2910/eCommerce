@@ -107,7 +107,8 @@ public class OrderCreatedConsumer : BackgroundService
         }
     }
 }
-/** Sơ đồ luồng xử lý:
+/** Sơ đồ luồng xử lý: Giả sử 2 user cùng đặt hàng 1 lúc nhưng tồn kho của sản phẩm đó chỉ còn 1
+ * 
  Người dùng A đặt hàng ──→ Order API ──→ RabbitMQ Queue
                                               │
 Người dùng B đặt hàng ──→ Order API ──→ RabbitMQ Queue

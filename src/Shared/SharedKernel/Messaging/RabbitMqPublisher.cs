@@ -63,4 +63,37 @@ public class RabbitMqPublisher(IConfiguration configuration)
             cancellationToken: cancellationToken
         );
     }
+
 }
+
+/* Mô hình trực quan Mô hình Direct Exchange
+- Direct Exchange là một loại exchange trong RabbitMQ
+    + Nơi các message được định tuyến đến các queue dựa trên một routing key khớp chính xác. 
+    + Điều này có nghĩa là message sẽ chỉ được gửi đến queue có routing key trùng khớp với routing key của message.
+- Producer -> [Direct Exchange] -> [Queue]
+
++----------------+       +------------------+       +----------------+
+|    Producer    | ----> |  Direct Exchange | ----> |     Queue      |
+|                |       |  (order_exchange)|       | (order_queue)  |
++----------------+       +------------------+       +----------------+
+       |                         |                          |
+       |                         |                          |
+       |                         |                          |
+       |                         |                          |
+       +------------------------>+                          |
+       |  Routing Key: "order.created"                      |
+       |                                                    |
+       |                                                    |
+       +--------------------------------------------------->+
+       |  Message: { OrderId: 123, UserId: 456, TotalPrice: 789.99 }
+       |
+       |
+       v
++----------------+
+|    Consumer    |
+|                |
++----------------+
+
+
+
+ */
