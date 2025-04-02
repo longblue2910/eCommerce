@@ -107,3 +107,31 @@ public class OrderCreatedConsumer : BackgroundService
         }
     }
 }
+/** Sơ đồ luồng xử lý:
+ Người dùng A đặt hàng ──→ Order API ──→ RabbitMQ Queue
+                                              │
+Người dùng B đặt hàng ──→ Order API ──→ RabbitMQ Queue
+                                              │
+                                              ↓
+                                      OrderSaga Consumer
+                                              │
+                                              ↓
+                                     Xử lý message của A
+                                              │
+                                              ↓
+                                    Kiểm tra tồn kho cho A
+                                              │
+                                              ↓
+                                     Giữ hàng thành công
+                                              │
+                                              ↓
+                                     Xử lý message của B
+                                              │
+                                              ↓
+                                    Kiểm tra tồn kho cho B
+                                              │
+                                              ↓
+                                     Phản hồi hết hàng
+
+ 
+ */
