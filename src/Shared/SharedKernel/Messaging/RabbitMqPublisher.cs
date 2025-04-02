@@ -70,30 +70,39 @@ public class RabbitMqPublisher(IConfiguration configuration)
 - Direct Exchange là một loại exchange trong RabbitMQ
     + Nơi các message được định tuyến đến các queue dựa trên một routing key khớp chính xác. 
     + Điều này có nghĩa là message sẽ chỉ được gửi đến queue có routing key trùng khớp với routing key của message.
-- Producer -> [Direct Exchange] -> [Queue]
+- Producer (Publisher) -> [Direct Exchange] -> [Queue]
 
-+----------------+       +------------------+       +----------------+
-|    Producer    | ----> |  Direct Exchange | ----> |     Queue      |
-|                |       |  (order_exchange)|       | (order_queue)  |
-+----------------+       +------------------+       +----------------+
-       |                         |                          |
-       |                         |                          |
-       |                         |                          |
-       |                         |                          |
-       +------------------------>+                          |
-       |  Routing Key: "order.created"                      |
-       |                                                    |
-       |                                                    |
-       +--------------------------------------------------->+
-       |  Message: { OrderId: 123, UserId: 456, TotalPrice: 789.99 }
-       |
-       |
-       v
-+----------------+
-|    Consumer    |
-|                |
-+----------------+
++----------------+       +------------------+       +----------------+       +----------------+
+|    Producer    | ----> |  Direct Exchange | ----> |     Queue      | ----> |    Consumer    |
+|  (Publisher)   |       |  (order_exchange)|       | (order_queue)  |       |                |
++----------------+       +------------------+       +----------------+       +----------------+
+       |                         |                          |                          |
+       |                         |                          |                          |
+       |                         |                          |                          |
+       |                         |                          |                          |
+       +------------------------>+                          |                          |
+       |  Routing Key: "order.created"                      |                          |
+       |                                                    |                          |
+       |                                                    |                          |
+       +--------------------------------------------------->+                          |
+       |  Message: { OrderId: 123, UserId: 456, TotalPrice: 789.99 }                   |
+       |                                                                               |
+       |                                                                               |
+       +------------------------------------------------------------------------------>+
+                                                                                       |
+                                                                                       |
+                                                                                       v
+                                                                               +----------------+
+                                                                               |    Consumer    |
+                                                                               |                |
+                                                                               +----------------+
 
 
+Giải thích chi tiết:
+1.	Producer (Publisher): Gửi message với routing key order.created đến order_exchange.
+2.	Direct Exchange: Nhận message và kiểm tra routing key. 
+    Nếu routing key khớp với order.created, message sẽ được gửi đến order_queue.
+3.	Queue: order_queue lưu trữ message cho đến khi consumer nhận và xử lý.
+4.	Consumer: Lắng nghe order_queue và xử lý message khi nhận được.
 
  */
