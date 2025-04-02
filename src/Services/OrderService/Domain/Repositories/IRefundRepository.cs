@@ -13,8 +13,8 @@ public interface IRefundRepository
     Task CreateAsync(Refund refund);
     Task<Refund> GetByIdAsync(Guid refundId);
     Task<Refund> GetByOrderIdAsync(Guid orderId);
-    Task UpdateAsync(Refund refund);
-    Task DeleteAsync(Refund refund);
+    void UpdateAsync(Refund refund);
+    void DeleteAsync(Refund refund);
     Task<List<Refund>> GetPendingRefundsAsync();
     Task<List<Refund>> GetApprovedRefundsAsync();
     Task<List<Refund>> GetRejectedRefundsAsync();

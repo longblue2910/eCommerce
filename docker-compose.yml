@@ -1,7 +1,7 @@
 ﻿version: '3.8'
 
 services:
-  # Cấu hình cho cơ sở dữ liệu SQL Server
+  # Cấu hình cho SQL Server (UserService)
   userservice-db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: userservice_sqlserver
@@ -14,11 +14,11 @@ services:
       - app_network
     restart: always
 
-  # Cấu hình cho API UserService
+  # Cấu hình API UserService
   userservice-api:
     build:
-      context: .  # Dùng thư mục gốc làm context
-      dockerfile: src/Services/UserService/API/Dockerfile  # Cập nhật lại đường dẫn
+      context: .
+      dockerfile: src/Services/UserService/API/Dockerfile
     container_name: userservice_api
     environment:
       ASPNETCORE_ENVIRONMENT: "Stagging"
@@ -31,7 +31,7 @@ services:
       - app_network
     restart: always
 
-  # Cấu hình cho MongoDB
+  # Cấu hình MongoDB (ProductService)
   productservice-db:
     image: mongo:latest
     container_name: productservice_mongodb
@@ -44,7 +44,7 @@ services:
       - app_network
     restart: always
 
-  # Cấu hình cho API ProductService
+  # Cấu hình API ProductService
   productservice-api:
     build:
       context: .
@@ -62,6 +62,21 @@ services:
     networks:
       - app_network
     restart: always
+
+  # 🐰 Cấu hình RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_container
+    environment:
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "StrongPass123!"
+    ports:
+      - "5673:5672"  # Port RabbitMQ (5672 mặc định, đổi thành 5673)
+      - "15673:15672" # Management UI (đổi từ 15672 thành 15673)
+    networks:
+      - app_network
+    restart: always
+
 
 networks:
   app_network:

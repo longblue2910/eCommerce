@@ -12,8 +12,8 @@ public interface IOrderRepository
 {
     Task CreateAsync(Order order);
     Task<Order> GetByIdAsync(Guid orderId);
-    Task UpdateAsync(Order order);
-    Task DeleteAsync(Order order);
+    void UpdateAsync(Order order);
+    void DeleteAsync(Order order);
     Task<List<Order>> GetByUserIdAsync(Guid userId);
     Task<List<Order>> GetPendingOrdersAsync();
     Task<List<Order>> GetOrdersByStatusAsync(OrderStatus status);

@@ -13,8 +13,8 @@ public interface IPaymentRepository
     Task CreateAsync(Payment payment);
     Task<Payment> GetByIdAsync(Guid paymentId);
     Task<Payment> GetByOrderIdAsync(Guid orderId);
-    Task UpdateAsync(Payment payment);
-    Task DeleteAsync(Payment payment);
+    void UpdateAsync(Payment payment);
+    void DeleteAsync(Payment payment);
     Task<List<Payment>> GetFailedPaymentsAsync();
     Task<List<Payment>> GetCompletedPaymentsAsync();
 }

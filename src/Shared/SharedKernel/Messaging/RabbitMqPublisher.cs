@@ -1,0 +1,66 @@
+﻿using RabbitMQ.Client;
+using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+
+namespace SharedKernel.Messaging;
+
+/// <summary>
+/// RabbitMQ Publisher để gửi message vào OrderSaga
+/// </summary>
+public class RabbitMqPublisher(IConfiguration configuration)
+{
+    private readonly string _hostName = configuration["RabbitMq:Host"];
+    private readonly string _userName = configuration["RabbitMq:Username"];
+    private readonly string _password = configuration["RabbitMq:Password"];
+    private readonly string _exchangeName = "order_saga_exchange";
+    private readonly int _port = int.Parse(configuration["RabbitMq:Port"]);
+
+    /// <summary>
+    /// Gửi message lên RabbitMQ để OrderSaga xử lý
+    /// </summary>
+    /// <typeparam name="T">Kiểu sự kiện</typeparam>
+    /// <param name="event">Sự kiện cần gửi</param>
+    /// <param name="routingKey">Routing key để OrderSaga xử lý</param>
+    /// <param name="cancellationToken">Token hủy</param>
+    public async Task PublishAsync<T>(T @event, string routingKey, CancellationToken cancellationToken = default) where T : class
+    {
+        var factory = new ConnectionFactory()
+        {
+            HostName = _hostName,
+            Port = _port,
+            UserName = _userName,
+            Password = _password
+        };
+
+        await using var connection = await factory.CreateConnectionAsync(cancellationToken);
+        await using var channel = await connection.CreateChannelAsync();
+
+        // 🔹 Khai báo exchange loại "direct"
+        await channel.ExchangeDeclareAsync(
+            exchange: _exchangeName,
+            type: ExchangeType.Direct,
+            durable: true,
+            autoDelete: false,
+            cancellationToken: cancellationToken
+        );
+
+        var message = JsonSerializer.Serialize(@event);
+        var body = Encoding.UTF8.GetBytes(message).AsMemory();
+
+        var properties = new BasicProperties
+        {
+            DeliveryMode = DeliveryModes.Persistent
+        };
+
+        // 🎯 Sử dụng routingKey để gửi đúng loại sự kiện vào OrderSaga
+        await channel.BasicPublishAsync(
+            exchange: _exchangeName,
+            routingKey: routingKey,
+            mandatory: false,
+            basicProperties: properties,
+            body: body,
+            cancellationToken: cancellationToken
+        );
+    }
+}
