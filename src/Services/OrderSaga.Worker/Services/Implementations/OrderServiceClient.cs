@@ -84,6 +84,7 @@ public interface IOrderServiceClient
     Task<bool> MarkOrderAsPaidAsync(Guid orderId, CancellationToken cancellationToken = default);
     Task<bool> MarkOrderAsCancelledAsync(Guid orderId, string reason, CancellationToken cancellationToken = default);
     Task<OrderDto?> GetOrderAsync(Guid orderId, CancellationToken cancellationToken = default);
+
 }
 
 public class OrderDto
@@ -92,4 +93,24 @@ public class OrderDto
     public Guid UserId { get; set; }
     public decimal TotalPrice { get; set; }
     public string Status { get; set; } = string.Empty;
+    public List<OrderItem> Items { get; set; }
+
 }
+
+
+// Model cho dữ liệu trả về
+public class OrderDetails
+{
+    public Guid OrderId { get; set; }
+    public Guid UserId { get; set; }
+    public decimal TotalAmount { get; set; }
+    public List<OrderItem> Items { get; set; }
+}
+
+public class OrderItem
+{
+    public Guid ProductId { get; set; }
+    public int Quantity { get; set; }
+    public decimal Price { get; set; }
+}
+

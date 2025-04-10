@@ -1,14 +1,26 @@
-﻿//using OrderSaga.Worker.Entities;
-
-//namespace OrderSaga.Worker.Services;
-
-///// <summary>
-///// Client để tương tác với Order Service
-///// </summary>
+﻿//// src/Services/OrderSaga.Worker/Services/IOrderServiceClient.cs
 //public interface IOrderServiceClient
 //{
-//    Task<bool> MarkOrderAsProcessingAsync(Guid orderId, CancellationToken cancellationToken = default);
-//    Task<bool> MarkOrderAsPaidAsync(Guid orderId, CancellationToken cancellationToken = default);
-//    Task<bool> MarkOrderAsCancelledAsync(Guid orderId, string reason, CancellationToken cancellationToken = default);
-//    Task<OrderDto?> GetOrderAsync(Guid orderId, CancellationToken cancellationToken = default);
+//    // Các phương thức hiện có
+
+//    /// <summary>
+//    /// Lấy chi tiết đơn hàng bao gồm danh sách sản phẩm
+//    /// </summary>
+//    Task<OrderDetails> GetOrderDetailsAsync(Guid orderId, CancellationToken cancellationToken = default);
+//}
+
+//// Model cho dữ liệu trả về
+//public class OrderDetails
+//{
+//    public Guid OrderId { get; set; }
+//    public Guid UserId { get; set; }
+//    public decimal TotalAmount { get; set; }
+//    public List<OrderItem> Items { get; set; }
+//}
+
+//public class OrderItem
+//{
+//    public Guid ProductId { get; set; }
+//    public int Quantity { get; set; }
+//    public decimal Price { get; set; }
 //}

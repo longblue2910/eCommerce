@@ -133,6 +133,4 @@ Người dùng B đặt hàng ──→ Order API ──→ RabbitMQ Queue
                                               │
                                               ↓
                                      Phản hồi hết hàng
-
- 
  */

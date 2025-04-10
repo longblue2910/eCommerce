@@ -1,0 +1,77 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "InventoryService.Protos";
+
+package inventory;
+
+service InventoryGrpc {
+  // Kiểm tra tồn kho cho nhiều sản phẩm
+  rpc CheckInventory (CheckInventoryRequest) returns (CheckInventoryResponse);
+  
+  // Giữ hàng trong kho cho đơn hàng
+  rpc ReserveInventory (ReserveInventoryRequest) returns (ReserveInventoryResponse);
+  
+  // Giải phóng hàng trong kho khi hủy đơn hàng
+  rpc ReleaseInventory (ReleaseInventoryRequest) returns (ReleaseInventoryResponse);
+  
+  // Xác nhận đã sử dụng hàng trong kho khi đơn hàng hoàn tất
+  rpc ConfirmInventory (ConfirmInventoryRequest) returns (ConfirmInventoryResponse);
+}
+
+message ProductQuantity {
+  string product_id = 1;
+  int32 quantity = 2;
+}
+
+message CheckInventoryRequest {
+  repeated ProductQuantity products = 1;
+}
+
+message CheckInventoryResponse {
+  bool success = 1;
+  repeated ProductInventoryStatus products = 2;
+  string message = 3;
+}
+
+message ProductInventoryStatus {
+  string product_id = 1;
+  bool in_stock = 2;
+  int32 available_quantity = 3;
+  string sku = 4;
+  string name = 5;
+}
+
+message ReserveInventoryRequest {
+  string order_id = 1;
+  repeated ProductQuantity products = 2;
+}
+
+message ReserveInventoryResponse {
+  bool success = 1;
+  string message = 2;
+  repeated ProductReservationStatus products = 3;
+}
+
+message ProductReservationStatus {
+  string product_id = 1;
+  bool reserved = 2;
+  string message = 3;
+}
+
+message ReleaseInventoryRequest {
+  string order_id = 1;
+}
+
+message ReleaseInventoryResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ConfirmInventoryRequest {
+  string order_id = 1;
+}
+
+message ConfirmInventoryResponse {
+  bool success = 1;
+  string message = 2;
+}

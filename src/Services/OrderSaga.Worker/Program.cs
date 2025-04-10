@@ -27,9 +27,7 @@ var host = Host.CreateDefaultBuilder(args)
             client.BaseAddress = new Uri(hostContext.Configuration["ServiceUrls:OrderService"]);
         });
 
-        services.AddHttpClient<IInventoryServiceClient, InventoryServiceClient>(client => {
-            client.BaseAddress = new Uri(hostContext.Configuration["ServiceUrls:InventoryService"]);
-        });
+        services.AddSingleton<IInventoryServiceClient, InventoryServiceClient>();
 
         services.AddHttpClient<IPaymentServiceClient, PaymentServiceClient>(client => {
             client.BaseAddress = new Uri(hostContext.Configuration["ServiceUrls:PaymentService"]);
