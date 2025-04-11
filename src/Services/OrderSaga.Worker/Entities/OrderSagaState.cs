@@ -52,13 +52,3 @@ public class OrderItemDto
     public int Quantity { get; set; }
     public decimal Price { get; set; }
 }
-
-/// <summary>
-/// Event khi đơn hàng được tạo
-/// </summary>
-public class OrderCreatedIntegrationEvent
-{
-    public Guid OrderId { get; set; }
-    public Guid UserId { get; set; }
-    public decimal TotalPrice { get; set; }
-}

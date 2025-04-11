@@ -1,10 +1,9 @@
 ﻿// src/Services/OrderSaga.Worker/Orchestrator/SagaOrchestrator.cs
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using OrderSaga.Worker.Entities;
 using OrderSaga.Worker.Repositories;
 using OrderSaga.Worker.Services;
 using OrderSaga.Worker.Services.Implementations;
+using SharedKernel.Events;
 
 namespace OrderSaga.Worker.Orchestrator;
 

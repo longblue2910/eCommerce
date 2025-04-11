@@ -8,13 +8,21 @@ namespace SharedKernel.Messaging;
 /// <summary>
 /// RabbitMQ Publisher để gửi message vào OrderSaga
 /// </summary>
-public class RabbitMqPublisher(IConfiguration configuration)
+public class RabbitMqPublisher
 {
-    private readonly string _hostName = configuration["RabbitMq:Host"];
-    private readonly string _userName = configuration["RabbitMq:Username"];
-    private readonly string _password = configuration["RabbitMq:Password"];
+    private readonly string _hostName;
+    private readonly string _userName;
+    private readonly string _password;
     private readonly string _exchangeName = "order_saga_exchange";
-    private readonly int _port = int.Parse(configuration["RabbitMq:Port"]);
+    private readonly int _port;
+
+    public RabbitMqPublisher(IConfiguration configuration)
+    {
+        _hostName = configuration["RabbitMq:Host"];
+        _userName = configuration["RabbitMq:Username"];
+        _password = configuration["RabbitMq:Password"];
+        _port = int.Parse(configuration["RabbitMq:Port"]);
+    }
 
     /// <summary>
     /// Gửi message lên RabbitMQ để OrderSaga xử lý
@@ -22,10 +30,9 @@ public class RabbitMqPublisher(IConfiguration configuration)
     /// <typeparam name="T">Kiểu sự kiện</typeparam>
     /// <param name="event">Sự kiện cần gửi</param>
     /// <param name="routingKey">Routing key để OrderSaga xử lý</param>
-    /// <param name="cancellationToken">Token hủy</param>
-    public async Task PublishAsync<T>(T @event, string routingKey, CancellationToken cancellationToken = default) where T : class
+    public void Publish<T>(T @event, string routingKey) where T : class
     {
-        var factory = new ConnectionFactory()
+        var factory = new ConnectionFactory
         {
             HostName = _hostName,
             Port = _port,
@@ -33,35 +40,51 @@ public class RabbitMqPublisher(IConfiguration configuration)
             Password = _password
         };
 
-        await using var connection = await factory.CreateConnectionAsync(cancellationToken);
-        await using var channel = await connection.CreateChannelAsync();
+        using var connection = factory.CreateConnection();
+        using var channel = connection.CreateModel();
 
-        // 🔹 Khai báo exchange loại "direct"
-        await channel.ExchangeDeclareAsync(
+        channel.ExchangeDeclare(
             exchange: _exchangeName,
             type: ExchangeType.Direct,
             durable: true,
-            autoDelete: false,
-            cancellationToken: cancellationToken
-        );
+            autoDelete: false);
 
-        var message = JsonSerializer.Serialize(@event);
-        var body = Encoding.UTF8.GetBytes(message).AsMemory();
-
-        var properties = new BasicProperties
+        // Tạo message envelope tương thích với MassTransit
+        var messageType = typeof(T).FullName;
+        var envelope = new
         {
-            DeliveryMode = DeliveryModes.Persistent
+            messageId = Guid.NewGuid(),
+            messageType = new[] { messageType },
+            message = @event,
+            sentTime = DateTime.UtcNow
         };
 
-        // 🎯 Sử dụng routingKey để gửi đúng loại sự kiện vào OrderSaga
-        await channel.BasicPublishAsync(
+        var message = JsonSerializer.Serialize(envelope, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false
+        });
+
+        var body = Encoding.UTF8.GetBytes(message);
+
+        var properties = channel.CreateBasicProperties();
+        properties.Persistent = true;
+        properties.ContentType = "application/json";
+
+        // Thêm các header cần thiết cho MassTransit
+        properties.Headers = new Dictionary<string, object>
+    {
+        { "Content-Type", "application/json" },
+        { "MessageType", messageType }
+    };
+
+        channel.BasicPublish(
             exchange: _exchangeName,
             routingKey: routingKey,
-            mandatory: false,
             basicProperties: properties,
-            body: body,
-            cancellationToken: cancellationToken
-        );
+            body: body);
+
+        Console.WriteLine($"Message published to exchange '{_exchangeName}' with routing key '{routingKey}'");
     }
 
 }

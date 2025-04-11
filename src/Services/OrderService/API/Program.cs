@@ -1,6 +1,8 @@
 ﻿using Application.Commands;
 using Application.Services;
 using Infrastructure;
+using MassTransit;
+using SharedKernel.Configuration;
 using SharedKernel.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,21 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateOrderCommand>());
 builder.Services.AddScoped<IOrderService, OrderService>(); // Đăng ký OrderService
 // Đăng ký RabbitMqPublisher
+
+// Cấu hình MassTransit cho OrderService
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        var rabbitMqSettings = builder.Configuration.GetSection("RabbitMQ").Get<RabbitMQSettings>();
+
+        cfg.Host(new Uri($"rabbitmq://{rabbitMqSettings.Host}:{rabbitMqSettings.Port}/"), h =>
+        {
+            h.Username(rabbitMqSettings.Username);
+            h.Password(rabbitMqSettings.Password);
+        });
+    });
+});
 
 builder.Services.AddSingleton<RabbitMqPublisher>();
 var app = builder.Build();

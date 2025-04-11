@@ -1,4 +1,5 @@
 ﻿using OrderSaga.Worker.Entities;
+using SharedKernel.Events;
 
 namespace OrderSaga.Worker.Orchestrator;
 
